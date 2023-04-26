@@ -359,7 +359,7 @@ BOOL GetCommandLineOption(PSTR szCmdLine, int *chOption, HWND *hwndParent)
 
 	if(isdigit(ch))
 	{
-		unsigned int i = atoi(szCmdLine);
+		unsigned int i = atoi(szCmdLine-1);
 		*hwndParent = (HWND)(UINT_PTR)i;
 	}
 	else
