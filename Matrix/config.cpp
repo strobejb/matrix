@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <tchar.h>
 #include <commctrl.h>
 #include "resource.h"
 #include "message.h"
@@ -17,7 +18,7 @@ extern int MatrixSpeed;
 extern int FontSize;
 extern BOOL RandomizeMessages;
 extern BOOL FontBold;
-extern char szFontName[];
+extern TCHAR szFontName[];
 
 HDC hdcPrev;
 HBITMAP hbmPrev;
@@ -38,21 +39,68 @@ void AddFonts(HWND hwnd)
 	LOGFONT lf;
 	lf.lfCharSet = ANSI_CHARSET;//DEFAULT_CHARSET;
 	lf.lfPitchAndFamily = 0;
-	lstrcpy(lf.lfFaceName, "");
+	lstrcpy(lf.lfFaceName, _T(""));
 
 	HDC hdc = GetDC(0);
-	EnumFontFamiliesEx(hdc, &lf, (FONTENUMPROC)fontproc, (LONG)hwnd, 0);
+	EnumFontFamiliesEx(hdc, &lf, (FONTENUMPROC)fontproc, (LONG_PTR)hwnd, 0);
 
 	ReleaseDC(0, hdc);
 }
 
-BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+#pragma comment(lib, "version.lib")
+
+//
+//	Get the specified file-version information string from a file
+//	
+//	szItem	- version item string, e.g:
+//		"FileDescription", "FileVersion", "InternalName", 
+//		"ProductName", "ProductVersion", etc  (see MSDN for others)
+//
+TCHAR* GetVersionString(const TCHAR* szFileName, const TCHAR* szValue, TCHAR* szBuffer, ULONG nLength)
 {
-	static char buf[256];
+	UINT   len;
+	PVOID  ver;
+	DWORD* codepage;
+	TCHAR  fmt[0x40];
+	PVOID  ptr = 0;
+	BOOL   result = FALSE;
+
+	szBuffer[0] = '\0';
+
+	len = GetFileVersionInfoSize(szFileName, 0);
+
+	if (len == 0 || (ver = malloc(len)) == 0)
+		return NULL;
+
+	if (GetFileVersionInfo(szFileName, 0, len, ver))
+	{
+		if (VerQueryValue(ver, TEXT("\\VarFileInfo\\Translation"),  (LPVOID*) & codepage, &len))
+		{
+			wsprintf(fmt, TEXT("\\StringFileInfo\\%04x%04x\\%s"), (*codepage) & 0xFFFF,
+				(*codepage) >> 16, szValue);
+
+			if (VerQueryValue(ver, fmt, &ptr, &len))
+			{
+				lstrcpyn(szBuffer, (TCHAR*)ptr, min(nLength, len));
+				result = TRUE;
+			}
+		}
+	}
+
+	free(ver);
+	return result ? szBuffer : NULL;
+}
+
+INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	static TCHAR buf[256];
 	HDC hdc;
 	HWND hwndCombo, hwndCtrl;
 	int index, items, val;
 	RECT rect;
+
+	TCHAR szCurExe[MAX_PATH];
+	TCHAR szVersion[40];
 
 	switch(uMsg)
 	{
@@ -86,13 +134,18 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		SendDlgItemMessage(hwnd, IDC_SLIDER3, TBM_SETPOS, TRUE, MessageSpeed);
 		SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_SETPOS, TRUE, FontSize);
 
+		GetModuleFileName(0, szCurExe, MAX_PATH);
+		GetVersionString(szCurExe, TEXT("FileVersion"), szVersion, 40);
+		SetDlgItemText(hwnd, IDC_VERSION, szVersion);
+
+
 		CheckDlgButton(hwnd, IDC_ENABLEPREV, EnablePreviews);
 		CheckDlgButton(hwnd, IDC_RANDOM, RandomizeMessages);
 		CheckDlgButton(hwnd, IDC_BOLD, FontBold);
 
 		AddFonts(GetDlgItem(hwnd, IDC_COMBO2));
 
-		index = SendDlgItemMessage(hwnd, IDC_COMBO2, CB_FINDSTRING, 0, (LPARAM)szFontName);
+		index = (int)SendDlgItemMessage(hwnd, IDC_COMBO2, CB_FINDSTRING, 0, (LPARAM)szFontName);
 		SendDlgItemMessage(hwnd, IDC_COMBO2, CB_SETCURSEL, index, 0);
 		return 0;
 
@@ -105,7 +158,7 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			GetClientRect(GetDlgItem(hwnd, IDC_PREVIEW), &rect);
 			BitBlt((HDC)wParam, (rect.right-maxcols)/2, (rect.bottom-maxrows)/2, maxcols, maxrows, hdcPrev, 0, 0, SRCCOPY);
-			return (BOOL)GetStockObject(NULL_BRUSH);
+			return (INT_PTR)GetStockObject(NULL_BRUSH);
 		}	
 		else
 		{
@@ -141,7 +194,7 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		case CBN_SELCHANGE:
 			//fall through to Preview:
-			index = SendDlgItemMessage(hwnd, IDC_COMBO2, CB_GETCURSEL, 0, 0);
+			index = (int)SendDlgItemMessage(hwnd, IDC_COMBO2, CB_GETCURSEL, 0, 0);
 			SendDlgItemMessage(hwnd, IDC_COMBO2, CB_GETLBTEXT, index, (LPARAM)szFontName);
 			
 			PostMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_PREV, BN_CLICKED), (LPARAM)GetDlgItem(hwnd,IDC_PREV));
@@ -170,7 +223,7 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			
 			hwndCtrl = GetDlgItem(hwnd, IDC_COMBO1);
 
-			items = min(MAXMESSAGES, SendMessage(hwndCtrl, CB_GETCOUNT, 0, 0));
+			items = (int)min(MAXMESSAGES, SendMessage(hwndCtrl, CB_GETCOUNT, 0, 0));
 
 			for(index = 0; index < items; index++)
 			{
@@ -180,22 +233,22 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			nNumMessages = items;
 			
 			//matrix speed
-			val = SendDlgItemMessage(hwnd, IDC_SLIDER1, TBM_GETPOS, 0, 0);	
+			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER1, TBM_GETPOS, 0, 0);
 			if(val >= SPEED_MIN && val <= SPEED_MAX)
 				MatrixSpeed = val;
 
 			//density
-			val = SendDlgItemMessage(hwnd, IDC_SLIDER2, TBM_GETPOS, 0, 0);	
+			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER2, TBM_GETPOS, 0, 0);
 			if(val >= DENSITY_MIN && val <= DENSITY_MAX)
 				Density = val;
 
 			//message speed
-			val = SendDlgItemMessage(hwnd, IDC_SLIDER3, TBM_GETPOS, 0, 0);	
+			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER3, TBM_GETPOS, 0, 0);
 			if(val >= MSGSPEED_MIN && val <= MSGSPEED_MAX)
 				MessageSpeed = val;
 
 			//font size
-			val = SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_GETPOS, 0, 0);	
+			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_GETPOS, 0, 0);
 			if(val >= FONT_MIN && val <= FONT_MAX)
 				FontSize = val;
 
@@ -207,7 +260,7 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			numrows = maxrows;
 			numcols = maxcols;
 			
-			val = SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_GETPOS,0, 0);
+			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_GETPOS,0, 0);
 			
 			GetWindowText(GetDlgItem(hwnd, IDC_COMBO1), buf, 256);
 			message.ClearMessage();
@@ -239,7 +292,7 @@ BOOL CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			hwndCombo = GetDlgItem(hwnd, IDC_COMBO1);
 			GetWindowText(hwndCombo, buf, 256);
 
-			index = SendMessage(hwndCombo, CB_GETCURSEL, 0, 0);
+			index = (int)SendMessage(hwndCombo, CB_GETCURSEL, 0, 0);
 			SendMessage(hwndCombo, CB_DELETESTRING, index, 0);
 
 			SendMessage(hwndCombo, CB_SETCURSEL, 0, 0);

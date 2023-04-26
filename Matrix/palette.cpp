@@ -3,15 +3,15 @@
 
 HBITMAP hDDB;
 
-HPALETTE ReadPalette(HINSTANCE hInstance, const char *bmpfile)
+HPALETTE ReadPalette(HINSTANCE hInstance, const TCHAR *bmpfile)
 {
 	HPALETTE hPalette;
 	LOGPALETTE *lp;
 
-	HANDLE hFile, hMap;
+	HANDLE hFile = INVALID_HANDLE_VALUE, hMap = INVALID_HANDLE_VALUE;
 
-	HRSRC hrsrc;
-	HANDLE hResource;
+	HRSRC hrsrc = 0;
+	HANDLE hResource = 0;
 	
 	BYTE *pmem;
 	BITMAPFILEHEADER *bfh;
@@ -24,11 +24,11 @@ HPALETTE ReadPalette(HINSTANCE hInstance, const char *bmpfile)
 	{
 		hFile = CreateFile(bmpfile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, 0);
 
-		if(hFile == 0) return 0;
+		if(hFile == INVALID_HANDLE_VALUE) return 0;
 
 		hMap = CreateFileMapping(hFile, 0, PAGE_READONLY, 0, 0, 0);
 
-		if(hMap == 0)
+		if(hMap == INVALID_HANDLE_VALUE)
 		{
 			CloseHandle(hFile);
 			return 0;
@@ -95,15 +95,15 @@ HPALETTE UseNicePalette(HDC hdc, HPALETTE hPalette)
 
 
 
-HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const char *bmpfile)
+HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const TCHAR *bmpfile)
 {
 	HPALETTE hPalette;
 	LOGPALETTE *lp;
 
-	HANDLE hFile, hMap;
+	HANDLE hFile = INVALID_HANDLE_VALUE, hMap = INVALID_HANDLE_VALUE;
 
 	HRSRC hrsrc;
-	HANDLE hResource;
+	HANDLE hResource = NULL ;
 	
 	BYTE *pmem;
 	BITMAPFILEHEADER *bfh;

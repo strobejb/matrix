@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -13,66 +13,54 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.K.) resources
+// English (United Kingdom) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Dialog
 //
 
-IDD_CONFIG DIALOG DISCARDABLE  0, 0, 340, 183
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_CONFIG DIALOGEX 0, 0, 340, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Matrix Viewer Configuration"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Decode &Speed",IDC_STATIC,7,7,128,36
     LTEXT           "Slower",IDC_STATIC,13,24,22,8
-    CONTROL         "Slider1",IDC_SLIDER1,"msctls_trackbar32",TBS_AUTOTICKS | 
-                    TBS_BOTH | WS_TABSTOP,38,17,62,22
+    CONTROL         "Slider1",IDC_SLIDER1,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,38,17,62,22
     LTEXT           "Faster",IDC_STATIC,104,24,20,8
     GROUPBOX        "Cypher &Density",IDC_STATIC,7,50,128,36
     LTEXT           "Less",IDC_STATIC,13,67,19,8
-    CONTROL         "Slider1",IDC_SLIDER2,"msctls_trackbar32",TBS_AUTOTICKS | 
-                    TBS_BOTH | WS_TABSTOP,38,60,62,22
+    CONTROL         "Slider1",IDC_SLIDER2,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,38,60,62,22
     LTEXT           "More",IDC_STATIC,104,67,23,8
     GROUPBOX        "&Message Display Speed",IDC_MSGSPEEDGRP,7,93,127,36
     LTEXT           "Slower",IDC_STATIC,13,110,22,8
-    CONTROL         "Slider3",IDC_SLIDER3,"msctls_trackbar32",TBS_AUTOTICKS | 
-                    TBS_BOTH | WS_TABSTOP,38,103,62,22
+    CONTROL         "Slider3",IDC_SLIDER3,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,38,103,62,22
     LTEXT           "Faster",IDC_STATIC,104,110,22,8
     GROUPBOX        "&Font Size",IDC_STATIC,7,137,127,36
     LTEXT           "Smaller",IDC_STATIC,13,153,24,8
-    CONTROL         "Slider3",IDC_SLIDER4,"msctls_trackbar32",TBS_AUTOTICKS | 
-                    TBS_BOTH | WS_TABSTOP,38,146,62,22
+    CONTROL         "Slider3",IDC_SLIDER4,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | WS_TABSTOP,38,146,62,22
     LTEXT           "Bigger",IDC_STATIC,104,153,25,8
     GROUPBOX        "Coded Messages",IDC_STATIC,145,7,188,134
-    COMBOBOX        IDC_COMBO1,153,22,172,62,CBS_DROPDOWN | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO1,153,22,172,62,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     CTEXT           "",IDC_PREVIEW,150,38,90,58,SS_CENTERIMAGE
     PUSHBUTTON      "&Add",IDC_ADD,246,45,36,18
     PUSHBUTTON      "&Remove",IDC_REMOVE,288,45,36,18
     PUSHBUTTON      "&Preview",IDC_PREV,246,68,78,18,WS_DISABLED
-    CONTROL         "Randomize Messages",IDC_RANDOM,"Button",BS_AUTOCHECKBOX | 
-                    WS_TABSTOP,153,124,85,10
-    CONTROL         "Always Preview",IDC_ENABLEPREV,"Button",BS_AUTOCHECKBOX | 
-                    BS_MULTILINE | WS_TABSTOP,251,124,65,10
+    CONTROL         "Randomize Messages",IDC_RANDOM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,153,124,85,10
+    CONTROL         "Always Preview",IDC_ENABLEPREV,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,251,124,65,10
     DEFPUSHBUTTON   "OK",IDOK,222,162,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,283,162,50,14
-    COMBOBOX        IDC_COMBO2,194,102,95,71,CBS_DROPDOWNLIST | CBS_SORT | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_COMBO2,194,102,95,71,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Font Name:",IDC_STATIC,153,104,38,8
-    CONTROL         "&Bold",IDC_BOLD,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | 
-                    WS_TABSTOP,296,104,30,10
-    LTEXT           "Updates at www.catch22.uk.net",IDC_STATIC,223,146,110,
-                    11,SS_CENTERIMAGE
-    CTEXT           "Matrix Viewer v1.1 Catch22 Productions",IDC_STATIC,138,
-                    150,76,18
+    CONTROL         "&Bold",IDC_BOLD,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,296,104,30,10
+    CTEXT           "Matrix Screensaver",IDC_STATIC,138,147,76,8
+    CONTROL         "<a>www.catch22.net</a>",IDC_SYSLINK1,"SysLink",LWS_RIGHT | WS_TABSTOP,247,146,86,14
+    CTEXT           "Matrix Screensaver",IDC_VERSION,138,158,76,11
 END
 
 
@@ -82,7 +70,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO DISCARDABLE 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_CONFIG, DIALOG
     BEGIN
@@ -101,18 +89,18 @@ END
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE DISCARDABLE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE DISCARDABLE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE DISCARDABLE 
+3 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -126,14 +114,16 @@ END
 // Bitmap
 //
 
-IDB_BITMAP1             BITMAP  DISCARDABLE     "matrix.bmp"
+IDB_BITMAP1             BITMAP                  "matrix.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Cursor
 //
 
-IDC_BLANKCURSOR         CURSOR  DISCARDABLE     "cursor1.cur"
+IDC_BLANKCURSOR         CURSOR                  "cursor1.cur"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -142,19 +132,70 @@ IDC_BLANKCURSOR         CURSOR  DISCARDABLE     "cursor1.cur"
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON1               ICON    DISCARDABLE     "icon1.ico"
+IDI_ICON1               ICON                    "icon1.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 4,0,0,1
+ PRODUCTVERSION 4,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "CompanyName", "Catch22 Productions"
+            VALUE "FileDescription", "Matrix Screensaver"
+            VALUE "FileVersion", "4.0.0.1"
+            VALUE "InternalName", "Matrix.scr"
+            VALUE "LegalCopyright", "Copyright (C) 2001-2023"
+            VALUE "OriginalFilename", "Matrix.exe"
+            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductVersion", "4.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_CONFIG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // String Table
 //
 
-STRINGTABLE DISCARDABLE 
+STRINGTABLE
 BEGIN
     IDS_DESCRIPTION         "Matrix Screen Saver"
 END
 
-#endif    // English (U.K.) resources
+#endif    // English (United Kingdom) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

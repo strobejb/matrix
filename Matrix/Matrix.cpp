@@ -6,7 +6,7 @@
 
 Message message;
 
-char szAppName[] = "Matrix Viewer";
+TCHAR szAppName[] = _T("Matrix Screensaver");
 
 HINSTANCE hInst;
 
@@ -30,7 +30,7 @@ int MatrixSpeed  = 5;			//1-10
 int FontSize	 = 12;			//8-30
 BOOL FontBold	 = TRUE;
 BOOL RandomizeMessages = FALSE;
-char szFontName[512] = "MS Sans Serif";
+TCHAR szFontName[512] = _T("MS Sans Serif");
 
 void LoadSettings(void);
 
@@ -193,7 +193,7 @@ void DecodeMatrix(HWND hwnd)
 				//erase a character position if this is a blank
 				RECT rect;
 				SetRect(&rect,  x * xChar, y * yChar, (x + 1) * xChar, (y + 1) * yChar);
-				ExtTextOut(hdc, x * xChar, y * yChar, ETO_OPAQUE, &rect, "", 0, 0);
+				ExtTextOut(hdc, x * xChar, y * yChar, ETO_OPAQUE, &rect, _T(""), 0, 0);
 			}
 			else
 			{
@@ -201,13 +201,13 @@ void DecodeMatrix(HWND hwnd)
 					|| matrix[x].blippos+8 == y || matrix[x].blippos +9 == y)
 				{
 					//a blip uses maximum brightness
-					char c = matrix[x].run[y] & 31;
+					TCHAR c = matrix[x].run[y] & 31;
 					BitBlt(hdc, x*xChar, y*yChar, 14, 14, hdcSymbols, c*14,14*4, SRCCOPY);
 				}
 				else
 				{
 					//c is in range 0-127  (0-31, 32-63, 64-95, 96-127)
-					char c = matrix[x].run[y];
+					TCHAR c = matrix[x].run[y];
 					int sx = c & 31;
 					int sy = c / 32;
 					
@@ -243,7 +243,7 @@ void Matrix::jjrandomise()
 void InitMatrix(HWND hwnd)
 {
 	//make a matrix!
-	matrix = new Matrix[maxcols];
+	matrix = new Matrix[maxcols];// { maxrows };
 	
 	for(int i = 0; i < maxcols; i++)
 		matrix[i].Init(maxrows);
@@ -315,7 +315,7 @@ int Normal(int iCmdShow)
 
 	DeInitMessage();
 
-	return msg.wParam;
+	return (int)msg.wParam;
 }
 
 int ScreenSave(void)
@@ -356,7 +356,7 @@ BOOL GetCommandLineOption(PSTR szCmdLine, int *chOption, HWND *hwndParent)
 	if(isdigit(ch))
 	{
 		unsigned int i = atoi(szCmdLine);
-		*hwndParent = (HWND)i;
+		*hwndParent = (HWND)(UINT_PTR)i;
 	}
 	else
 		*hwndParent = NULL;
@@ -373,6 +373,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 	HWND	hwndParent;
 
 	hInst = hInstance;			//Make the instance globally available
+	TCHAR* s = GetCommandLine();
 
 	//Make sure that only 1 instance runs at a time - 
 	//Win98 seems to want us to restart every 5 seconds!!
@@ -406,7 +407,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 }
 
 //-----------------------------------------------------------------------------
-void main(void) {}
+int main(void) {}
 
 LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -487,14 +488,14 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		{
 			QueryPerformanceCounter(&pc2);
 			
-			char buf[32];
+			TCHAR buf[32];
 			
 			//build up an average
 			median += DWORD(DWORD(freq.QuadPart) / DWORD(pc2.QuadPart - pc1.QuadPart));
 			
 			if(++fpscount == 16)
 			{
-				wsprintf(buf, "Matrix View - %u FPS",  median / 16);
+				wsprintf(buf, _T("%s - %u FPS"), szAppName, median / 16);
 				SetWindowText(hwnd, buf);
 				median = 0;
 				fpscount = 0;

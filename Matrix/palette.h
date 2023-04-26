@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-HPALETTE ReadPalette(HINSTANCE hInstance, const char *bmpfile);
+HPALETTE ReadPalette(HINSTANCE hInstance, const TCHAR *bmpfile);
 HPALETTE UseNicePalette(HDC hdc, HPALETTE hPalette);
-HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const char *bmpfile);
+HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const TCHAR *bmpfile);
 
 #ifdef __cplusplus
 }

@@ -15,7 +15,7 @@ extern BOOL RandomizeMessages;
 extern BOOL FontBold;
 extern int FontSize;
 extern Message message;
-extern char szFontName[];
+extern TCHAR szFontName[];
 //
 //	A class which handles matrix messages appearing
 //
@@ -69,7 +69,7 @@ void Message::ClearMessage()
 			bitmap[x][y] = false;
 }
 
-void Message::SetMessage(char *newmsg, int PointSize)
+void Message::SetMessage(TCHAR *newmsg, int PointSize)
 {
 	RECT rect;
 	HFONT hfont, holdfont;

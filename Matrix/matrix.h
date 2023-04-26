@@ -1,6 +1,6 @@
 #ifndef MATRIX_INC
 #define MATRIX_INC
-
+#include <tchar.h>
 int jjrand(void);
 extern int maxcols, maxrows;
 extern int numrows, numcols;
@@ -55,9 +55,9 @@ struct Matrix
 		bliplen = jjrand() % 50 + numrows;
 	}
 
-	Matrix()//int runlength)
-	{
-	}
+	Matrix() = default;////int runlength)
+	//{
+	//}
 
 	~Matrix() { delete[] run; delete[] update; }
 	void ScrollDown(HDC hdc);

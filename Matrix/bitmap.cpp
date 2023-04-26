@@ -6,15 +6,12 @@
 
 
 
-HBITMAP LoadBitmap2(HDC hdc,HINSTANCE hInstance, char *bmpfile)
+HBITMAP LoadBitmap2(HDC hdc,HINSTANCE hInstance, TCHAR *bmpfile)
 {
-	HPALETTE hPalette;
-	LOGPALETTE *lp;
-
-	HANDLE hFile, hMap;
+	HANDLE hFile = INVALID_HANDLE_VALUE, hMap = 0;
 
 	HRSRC hrsrc;
-	HANDLE hResource;
+	HANDLE hResource = NULL;
 	
 	BYTE *pmem;
 	BITMAPFILEHEADER *bfh;
@@ -26,11 +23,11 @@ HBITMAP LoadBitmap2(HDC hdc,HINSTANCE hInstance, char *bmpfile)
 	{
 		hFile = CreateFile(bmpfile, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_READONLY, 0);
 
-		if(hFile == 0) return 0;
+		if(hFile == INVALID_HANDLE_VALUE) return 0;
 
 		hMap = CreateFileMapping(hFile, 0, PAGE_READONLY, 0, 0, 0);
 
-		if(hMap == 0)
+		if(hMap == NULL)
 		{
 			CloseHandle(hFile);
 			return 0;
@@ -111,7 +108,7 @@ HBITMAP DIBtoDDB(HDC hdc,void *hDIB)
 		}
 	
 		hPalette = CreatePalette(lp);
-		delete lp;
+		delete[] lp;
 
 		SelectPalette(hdc, hPalette, FALSE);
 		RealizePalette(hdc);
@@ -131,12 +128,13 @@ HBITMAP DIBtoDDB(HDC hdc,void *hDIB)
 	return hBitmap;
 }
 
-HBITMAP LoadBitmap3(HDC hdc, HINSTANCE hInstance, char *bmpfile)
+HBITMAP LoadBitmap3(HDC hdc, HINSTANCE hInstance, TCHAR *bmpfile)
 {
-	HANDLE hFile, hMap;
+	HANDLE hFile = INVALID_HANDLE_VALUE;
+	HANDLE hMap = 0;
 
 	HRSRC hrsrc;
-	HANDLE hResource;
+	HANDLE hResource = 0;
 	
 	BYTE *pmem;
 	BITMAPFILEHEADER *bfh;

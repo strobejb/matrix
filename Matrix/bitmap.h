@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-HBITMAP LoadBitmap2(HDC hdc,HINSTANCE hInstance, char *bmpfile);
-HBITMAP LoadBitmap3(HDC hdc,HINSTANCE hInstance, char *bmpfile);
+HBITMAP LoadBitmap2(HDC hdc,HINSTANCE hInstance, TCHAR *bmpfile);
+HBITMAP LoadBitmap3(HDC hdc,HINSTANCE hInstance, TCHAR *bmpfile);
 
 #ifdef __cplusplus
 }

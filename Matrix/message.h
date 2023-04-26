@@ -7,7 +7,7 @@
 #define MSGHEIGHT 256
 
 extern int nNumMessages;
-extern char szMessages[][MAXMSGLEN];
+extern TCHAR szMessages[][MAXMSGLEN];
 
 //
 //	A class which handles matrix messages appearing
@@ -15,7 +15,7 @@ extern char szMessages[][MAXMSGLEN];
 class Message
 {
 public:
-	char curmsg[MAXMSGLEN];
+	TCHAR curmsg[MAXMSGLEN];
 
 	bool bitmap[MSGWIDTH][MSGHEIGHT];
 	bool visible[MSGWIDTH][MSGHEIGHT];
@@ -27,7 +27,7 @@ public:
 
 	int rand();//unsigned short reg) 
 
-	void SetMessage(char *newmsg, int fontsize);
+	void SetMessage(TCHAR *newmsg, int fontsize);
 	void Reveal(int amt);
 	void ShowMessage(HDC hdc);
 	void HideMessage(void);
