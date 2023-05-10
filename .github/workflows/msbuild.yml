@@ -7,9 +7,11 @@ name: MSBuild
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - 'v*'
+    #branches: [ "main" ]
+  #pull_request:
+    #branches: [ "main" ]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -22,6 +24,7 @@ env:
   
   TARGET_NAME: matrix
   TARGET_EXT: .scr
+  VERSION_H: Matrix\version.h
 
 permissions:
   contents: read
@@ -40,7 +43,17 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
-
+      
+    - name: Increment version
+      shell: python
+      run: |
+        import re
+        r = re.match(r'v(\d+)\.(\d+)\.(\d+)', '${{github.ref_name}}')
+        with open(${env.VERSION_H}}, "w") as f:
+          v = f"#define VERSION_BIN {r.group(1)},{r.group(2)},{r.group(3)},{${{github.run_number}}}"
+          f.write(v)
+          print(v)
+          
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
