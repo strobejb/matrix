@@ -20,7 +20,9 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
   
-  TARGET_FILE_NAME: matrix.scr
+  TARGET_NAME: matrix
+  TARGET_EXT: .scr
+  TARGET_FILE_NAME: ${{env.TARGET_NAME}}${{env.TARGET_EXT}}
 
 permissions:
   contents: read
@@ -44,11 +46,11 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
       # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:TargetFileName=${{env.TARGET_FILE_NAME}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:TargetName=${{env.TARGET_NAME}} /p:TargetExt=${{env.TARGET_EXT}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
     
     - name: Package
       uses: actions/upload-artifact@v2
       with:
         name: Matrix_${{matrix.configuration}}_${{matrix.platform}}
-        path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_FILE_NAME}}     
+        path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_FILE_NAME}}
       
