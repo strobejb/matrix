@@ -53,9 +53,8 @@ jobs:
         path = os.path.abspath("${{env.VERSION_H}}")
         with open(path, "w") as f:
           v = f"#define VERSION_BIN {r.group(1)},{r.group(2)},{r.group(3)},{${{github.run_number}}}"
-          f.write(v)
-          print(path)
-          print(v)
+          print(v, file=f)
+          print(v, '>>', path)
           
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
