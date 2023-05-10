@@ -22,7 +22,7 @@ env:
   
   TARGET_NAME: matrix
   TARGET_EXT: .scr
-  TARGET_FILE_NAME: ${{env.TARGET_NAME}}${{env.TARGET_EXT}}
+  TARGET_FILE_NAME: $TARGET_NAME$TARGET_EXT
 
 permissions:
   contents: read
