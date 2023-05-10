@@ -22,7 +22,6 @@ env:
   
   TARGET_NAME: matrix
   TARGET_EXT: .scr
-  TARGET_FILE_NAME: $TARGET_NAME$TARGET_EXT
 
 permissions:
   contents: read
@@ -52,5 +51,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Matrix_${{matrix.configuration}}_${{matrix.platform}}
-        path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_FILE_NAME}}
+        path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}
       
