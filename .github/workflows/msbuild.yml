@@ -49,7 +49,7 @@ jobs:
       run: |
         import re
         r = re.match(r'v(\d+)\.(\d+)\.(\d+)', '${{github.ref_name}}')
-        with open(${env.VERSION_H}}, "w") as f:
+        with open("${env.VERSION_H}}", "w") as f:
           v = f"#define VERSION_BIN {r.group(1)},{r.group(2)},{r.group(3)},{${{github.run_number}}}"
           f.write(v)
           print(v)
