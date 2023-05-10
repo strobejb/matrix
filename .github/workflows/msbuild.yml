@@ -24,7 +24,7 @@ env:
   
   TARGET_NAME: matrix
   TARGET_EXT: .scr
-  VERSION_H: Matrix\version.h
+  VERSION_H: Matrix\\version.h
 
 permissions:
   contents: read
