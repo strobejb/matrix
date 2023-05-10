@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Add MSBuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v1.1
       
     - name: Increment version
       shell: python
@@ -63,7 +63,7 @@ jobs:
       run: msbuild /m /p:TargetName=${{env.TARGET_NAME}} /p:TargetExt=${{env.TARGET_EXT}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
     
     - name: Package
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Matrix_${{matrix.configuration}}_${{matrix.platform}}
         path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}
