@@ -143,6 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Matrix.rc" />
+    <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="afxres.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="message.h" />
     <ClInclude Include="palette.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />

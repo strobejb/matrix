@@ -102,8 +102,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "\r\n"
-    "\0"
+    "#include ""version.rc""\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -137,45 +136,6 @@ IDI_ICON1               ICON                    "icon1.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 4,0,0,1
- PRODUCTVERSION 4,0,0,1
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x40004L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "080904b0"
-        BEGIN
-            VALUE "CompanyName", "Catch22 Productions"
-            VALUE "FileDescription", "Matrix Screensaver"
-            VALUE "FileVersion", "4.0.0.1"
-            VALUE "InternalName", "Matrix.scr"
-            VALUE "LegalCopyright", "Copyright (C) 2001-2023"
-            VALUE "OriginalFilename", "Matrix.exe"
-            VALUE "ProductName", "TODO: <Product name>"
-            VALUE "ProductVersion", "4.0.0.1"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x809, 1200
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // AFX_DIALOG_LAYOUT
 //
 
@@ -205,8 +165,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
-
+#include "version.rc"
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
