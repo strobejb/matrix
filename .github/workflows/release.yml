@@ -40,8 +40,8 @@ jobs:
 
     - name: Package Path
       run: |
-        echo "TARGET_PATH=bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" >> $GITHUB_ENV
-        echo "PACKAGE_NAME=Matrix_${{matrix.configuration}}_${{matrix.platform}}" >> $GITHUB_ENV
+        echo "TARGET_PATH=bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" >> "$GITHUB_ENV"
+        echo "PACKAGE_NAME=Matrix_${{matrix.configuration}}_${{matrix.platform}}" >> "$GITHUB_ENV"
         
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.1
