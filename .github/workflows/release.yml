@@ -1,0 +1,76 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Create Release
+
+on:
+  release:
+    types:
+      - created
+      
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+  
+  TARGET_NAME: matrix
+  TARGET_EXT: .scr
+  VERSION_H: Matrix\\version.h
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64, x86]
+        
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Package Path
+      run: |
+        echo "TARGET_PATH=bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" >> $GITHUB_ENV
+        echo "PACKAGE_NAME=Matrix_${{matrix.configuration}}_${{matrix.platform}}" >> $GITHUB_ENV
+        
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      
+    - name: Increment version
+      shell: python
+      run: |
+        import os
+        import re
+        r = re.match(r'v(\d+)\.(\d+)\.(\d+)', '${{github.ref_name}}')
+        path = os.path.abspath("${{env.VERSION_H}}")
+        with open(path, "w") as f:
+          print("#define BUILD_MAJ", r.group(1), file=f)
+          print("#define BUILD_MIN", r.group(2), file=f)
+          print("#define BUILD_PAT", r.group(3), file=f)
+          print("#define BUILD_NUM", ${{github.run_number}}, file=f)        
+          print("Writing: ", path)
+          
+    - name: Build
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:TargetName=${{env.TARGET_NAME}} /p:TargetExt=${{env.TARGET_EXT}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
+    
+    - name: Package
+      run: Compress-Archive -Path ${{env.TARGET_PATH}}, LICENSE, README.md -Destination ${{env.PACKAGE_NAME}}
+      
+    - name: Publish
+      env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release upload ${{github.ref_name}} ${{env.PACKAGE_NAME}}      
+      
