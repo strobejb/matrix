@@ -55,11 +55,8 @@ jobs:
           print("#define BUILD_MAJ", r.group(1), file=f)
           print("#define BUILD_MIN", r.group(2), file=f)
           print("#define BUILD_PAT", r.group(3), file=f)
-          print("#define BUILD_NUM", ${{github.run_number}}, file=f)
-          
+          print("#define BUILD_NUM", ${{github.run_number}}, file=f)        
           print("Writing: ", path)
-          f.seek(0)
-          print(f.read())
           
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
