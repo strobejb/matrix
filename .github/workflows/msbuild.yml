@@ -52,9 +52,14 @@ jobs:
         r = re.match(r'v(\d+)\.(\d+)\.(\d+)', '${{github.ref_name}}')
         path = os.path.abspath("${{env.VERSION_H}}")
         with open(path, "w") as f:
-          v = f"#define VERSION_BIN {r.group(1)},{r.group(2)},{r.group(3)},{${{github.run_number}}}"
-          print(v, file=f)
-          print(v, '>>', path)
+          print("#define BUILD_MAJ", r.group(1), file=f)
+          print("#define BUILD_MIN", r.group(2), file=f)
+          print("#define BUILD_PAT", r.group(3), file=f)
+          print("#define BUILD_NUM", ${{github.run_number}}, file=f)
+          
+          print("Writing: ", path)
+          f.seek(0)
+          print(f.read())
           
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}

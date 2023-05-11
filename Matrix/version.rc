@@ -4,12 +4,15 @@
 // Version
 //
 #include "version.h"
-#define STRINGIZE(s) #s
-#define VERSION_STR STRINGIZE(VERSION_BIN)
+
+#define STRINGIZE_(s) #s
+#define Q(s) STRINGIZE_(s)
+
+#define BUILD_STR Q(BUILD_MAJ) "." Q(BUILD_MIN) "." Q(BUILD_PAT)
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION VERSION_BIN
- PRODUCTVERSION VERSION_BIN
+ FILEVERSION BUILD_MAJ,BUILD_MIN,BUILD_PAT,BUILD_NUM
+ PRODUCTVERSION BUILD_MAJ,BUILD_MIN,BUILD_PAT
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -26,12 +29,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Catch22 Productions"
             VALUE "FileDescription", "Matrix Screensaver"
-            VALUE "FileVersion", VERSION_STR
+            VALUE "FileVersion", BUILD_STR "." Q(BUILD_NUM) "\0"
             VALUE "InternalName", "Matrix.scr"
             VALUE "LegalCopyright", "Copyright (C) 2001-2023"
             VALUE "OriginalFilename", "Matrix.exe"
-            VALUE "ProductName", "TODO: <Product name>"
-            VALUE "ProductVersion", VERSION_STR
+            VALUE "ProductName", "Matrix Screensaver"
+            VALUE "ProductVersion", BUILD_STR "\0"
         END
     END
     BLOCK "VarFileInfo"
