@@ -68,5 +68,8 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Matrix_${{matrix.configuration}}_${{matrix.platform}}
-        path: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}
+        path: |
+          bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}
+          LICENSE
+          README.md
       
