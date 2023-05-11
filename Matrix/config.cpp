@@ -1,7 +1,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <commctrl.h>
-#include "resource.h"
+#include "resource/resource.h"
 #include "message.h"
 #include "matrix.h"
 

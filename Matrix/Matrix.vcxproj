@@ -142,24 +142,24 @@
     <ClCompile Include="Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Matrix.rc" />
-    <ResourceCompile Include="version.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="afxres.h" />
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="matrix.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="palette.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="version.h" />
+    <ClInclude Include="resource\afxres.h" />
+    <ClInclude Include="resource\resource.h" />
+    <ClInclude Include="resource\version.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="matrix.bmp" />
+    <ResourceCompile Include="resource\Matrix.rc" />
+    <ResourceCompile Include="resource\version.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cursor1.cur" />
+    <None Include="resource\cursor1.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resource\icon1.ico" />
+    <Image Include="resource\matrix.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include "resource.h"
+#include "resource/resource.h"
 #include "palette.h"
 #include "message.h"
 #include "matrix.h"
