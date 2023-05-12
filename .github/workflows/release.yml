@@ -69,7 +69,7 @@ jobs:
     - name: Package
       run: 
         $compress = @{
-          Path = "${{env.TARGET_PATH}},
+          Path = "${{env.TARGET_PATH}}",
                  "LICENCE",
                  "README.md"
           CompressionLevel = "Optimal"
