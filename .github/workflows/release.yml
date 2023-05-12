@@ -73,7 +73,7 @@ jobs:
           Path = "${{env.TARGET_PATH}}", "LICENCE", "README.md";
           CompressionLevel = "Optimal";
           DestinationPath = "${{env.PACKAGE_NAME}}"
-        }
+        };
         Compress-Archive @compress
       
     - name: Publish
