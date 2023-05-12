@@ -21,7 +21,7 @@ env:
   
   TARGET_NAME: matrix
   TARGET_EXT: .scr
-  VERSION_H: Matrix\\version.h
+  VERSION_H: Matrix\\resource\\version.h
 
 permissions:
   contents: write
@@ -36,15 +36,16 @@ jobs:
     runs-on: windows-latest    
     
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
     
     - name: Set variables
       run: 
         echo "TARGET_PATH=bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" 
-             "PACKAGE_NAME=.\Matrix_${{matrix.configuration}}_${{matrix.platform}}.zip" 
+             "PACKAGE_NAME=./Matrix_${{matrix.configuration}}_${{matrix.platform}}.zip" 
              | Out-File -FilePath $env:GITHUB_ENV
 
-    - name: Add MSBuild to PATH
+    - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
       
     - name: Increment version
@@ -63,9 +64,13 @@ jobs:
           
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      # Add additional options to the MSBuild command line here (like platform or verbosity level).
-      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
-      run: msbuild /m /p:TargetName=${{env.TARGET_NAME}} /p:TargetExt=${{env.TARGET_EXT}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
+      # rename the destination binary using a comination of TargetName & TargetExt.
+      # setting TargetFileName directly does not work
+      run: msbuild /m 
+        /p:TargetName=${{env.TARGET_NAME}} 
+        /p:TargetExt=${{env.TARGET_EXT}} 
+        /p:Configuration=${{matrix.configuration}} 
+        /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
     
     - name: Package
       run: 
@@ -77,7 +82,7 @@ jobs:
         Compress-Archive @compress
       
     - name: Publish
-      env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: gh release upload ${{github.ref_name}} ${{env.PACKAGE_NAME}}      
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}      
       
