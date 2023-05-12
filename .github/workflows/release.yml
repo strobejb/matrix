@@ -24,7 +24,7 @@ env:
   VERSION_H: Matrix\\version.h
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
