@@ -35,8 +35,8 @@ jobs:
         
     runs-on: windows-latest
     env:
-      TARGET_PATH: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}"
-      PACKAGE_NAME: Matrix_${{matrix.configuration}}_${{matrix.platform}}"
+      TARGET_PATH: "bin\\${{matrix.platform}}\\${{matrix.configuration}}\\${{env.TARGET_NAME}}${{env.TARGET_EXT}}"
+      PACKAGE_NAME: "Matrix_${{matrix.configuration}}_${{matrix.platform}}"
     
     steps:
     - uses: actions/checkout@v3
@@ -65,7 +65,15 @@ jobs:
       run: msbuild /m /p:TargetName=${{env.TARGET_NAME}} /p:TargetExt=${{env.TARGET_EXT}} /p:Configuration=${{matrix.configuration}} /p:Platform=${{matrix.platform}} ${{env.SOLUTION_FILE_PATH}}
     
     - name: Package
-      run: Compress-Archive -Path $TARGET_PATH, LICENSE, README.md -Destination $PACKAGE_NAME
+      run: 
+        $compress = @{
+          Path = ${{TARGET_PATH}},             
+                 "LICENCE",
+                 "README.md"
+          CompressionLevel = "Optimal"
+          DestinationPath = ${{PACKAGE_NAME}}
+        }
+        Compress-Archive -Path $TARGET_PATH, LICENSE, README.md -Destination $PACKAGE_NAME
       
     - name: Publish
       env:
