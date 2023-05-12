@@ -33,13 +33,15 @@ jobs:
         configuration: [Release]
         platform: [x64, x86]
         
-    runs-on: windows-latest
-    env:
-      TARGET_PATH: bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}
-      PACKAGE_NAME: Matrix_${{matrix.configuration}}_${{matrix.platform}}
+    runs-on: windows-latest    
     
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Set variables
+      run: 
+        echo "TARGET_PATH=bin\\${{matrix.platform}}\\${{matrix.configuration}}\\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" >> $GITHUB_ENV
+        echo "PACKAGE_NAME=Matrix_${{matrix.configuration}}_${{matrix.platform}}" >> $GITHUB_ENV    
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.1
@@ -67,13 +69,13 @@ jobs:
     - name: Package
       run: 
         $compress = @{
-          Path = $TARGET_PATH,             
+          Path = ${{env.TARGET_PATH}},
                  "LICENCE",
                  "README.md"
           CompressionLevel = "Optimal"
-          DestinationPath = $PACKAGE_NAME
+          DestinationPath = ${{env.PACKAGE_NAME}}
         }
-        Compress-Archive -Path $TARGET_PATH, LICENSE, README.md -Destination $PACKAGE_NAME
+        Compress-Archive @compress
       
     - name: Publish
       env:
