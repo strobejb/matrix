@@ -40,8 +40,8 @@ jobs:
     
     - name: Set variables
       run: 
-        echo "TARGET_PATH=bin\\${{matrix.platform}}\\${{matrix.configuration}}\\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" 
-             "PACKAGE_NAME=Matrix_${{matrix.configuration}}_${{matrix.platform}}" 
+        echo "TARGET_PATH=bin\${{matrix.platform}}\${{matrix.configuration}}\${{env.TARGET_NAME}}${{env.TARGET_EXT}}" 
+             "PACKAGE_NAME=.\Matrix_${{matrix.configuration}}_${{matrix.platform}}.zip" 
              | Out-File -FilePath $env:GITHUB_ENV
 
     - name: Add MSBuild to PATH
