@@ -1,7 +1,101 @@
 #include <windows.h>
 #include "palette.h"
 
+extern COLORREF MatrixColor;
+
 HBITMAP hDDB;
+
+BYTE ScaleColor(BYTE color, BYTE brightness)
+{
+	return (BYTE)((int)color * brightness / 255);
+}
+
+BYTE Max3(BYTE a, BYTE b, BYTE c)
+{
+	return max(a, max(b, c));
+}
+
+void CopyPaletteEntry(PALETTEENTRY *entry, RGBQUAD *rgb)
+{
+	BYTE brightness = Max3(rgb->rgbRed, rgb->rgbGreen, rgb->rgbBlue);
+
+	if(MatrixColor == MATRIX_DEFAULT_COLOR)
+	{
+		entry->peBlue  = rgb->rgbBlue;
+		entry->peGreen = rgb->rgbGreen;
+		entry->peRed   = rgb->rgbRed;
+	}
+	else
+	{
+		entry->peBlue  = ScaleColor(GetBValue(MatrixColor), brightness);
+		entry->peGreen = ScaleColor(GetGValue(MatrixColor), brightness);
+		entry->peRed   = ScaleColor(GetRValue(MatrixColor), brightness);
+	}
+
+	entry->peFlags = 0;
+}
+
+COLORREF HueToColor(int hue)
+{
+	int r = 0, g = 0, b = 0;
+	int x;
+
+	hue %= 360;
+	if(hue < 0) hue += 360;
+
+	x = 255 * (60 - abs(hue % 120 - 60)) / 60;
+
+	if(hue < 60)
+	{
+		r = 255; g = x;
+	}
+	else if(hue < 120)
+	{
+		r = x; g = 255;
+	}
+	else if(hue < 180)
+	{
+		g = 255; b = x;
+	}
+	else if(hue < 240)
+	{
+		g = x; b = 255;
+	}
+	else if(hue < 300)
+	{
+		r = x; b = 255;
+	}
+	else
+	{
+		r = 255; b = x;
+	}
+
+	return RGB(r, g, b);
+}
+
+int ColorToHue(COLORREF color)
+{
+	int r = GetRValue(color);
+	int g = GetGValue(color);
+	int b = GetBValue(color);
+	int maxc = max(r, max(g, b));
+	int minc = min(r, min(g, b));
+	int delta = maxc - minc;
+	int hue;
+
+	if(delta == 0)
+		return 120;
+
+	if(maxc == r)
+		hue = 60 * (g - b) / delta;
+	else if(maxc == g)
+		hue = 120 + 60 * (b - r) / delta;
+	else
+		hue = 240 + 60 * (r - g) / delta;
+
+	if(hue < 0) hue += 360;
+	return hue;
+}
 
 HPALETTE ReadPalette(HINSTANCE hInstance, const TCHAR *bmpfile)
 {
@@ -63,10 +157,7 @@ HPALETTE ReadPalette(HINSTANCE hInstance, const TCHAR *bmpfile)
 	if(!bi) return 0;
 	for(unsigned i = 0; i < numcols; i++)
 	{
-		lp->palPalEntry[i].peBlue  = bi->bmiColors[i].rgbBlue;
-		lp->palPalEntry[i].peGreen = bi->bmiColors[i].rgbGreen;
-		lp->palPalEntry[i].peRed   = bi->bmiColors[i].rgbRed;
-		lp->palPalEntry[i].peFlags = 0;
+		CopyPaletteEntry(&lp->palPalEntry[i], &bi->bmiColors[i]);
 	}
 
 	hPalette = CreatePalette(lp);
@@ -109,6 +200,7 @@ HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const TCHAR *bmpfile)
 	BITMAPFILEHEADER *bfh;
 	
 	BITMAPINFO *bi;
+	BITMAPINFO *biTint;
 	BITMAPINFOHEADER *bih;
 	
 	
@@ -153,12 +245,19 @@ HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const TCHAR *bmpfile)
 	
 	bi = (BITMAPINFO *)bih;
 	if(!bi) return 0;
+
+	biTint = (BITMAPINFO *)HeapAlloc(GetProcessHeap(), 0, sizeof(BITMAPINFOHEADER) + (sizeof(RGBQUAD) * numcols));
+	if(!biTint) return 0;
+
+	CopyMemory(&biTint->bmiHeader, &bi->bmiHeader, sizeof(BITMAPINFOHEADER));
+
 	for(unsigned i = 0; i < numcols; i++)
 	{
-		lp->palPalEntry[i].peBlue  = bi->bmiColors[i].rgbBlue;
-		lp->palPalEntry[i].peGreen = bi->bmiColors[i].rgbGreen;
-		lp->palPalEntry[i].peRed   = bi->bmiColors[i].rgbRed;
-		lp->palPalEntry[i].peFlags = 0;
+		CopyPaletteEntry(&lp->palPalEntry[i], &bi->bmiColors[i]);
+		biTint->bmiColors[i].rgbBlue  = lp->palPalEntry[i].peBlue;
+		biTint->bmiColors[i].rgbGreen = lp->palPalEntry[i].peGreen;
+		biTint->bmiColors[i].rgbRed   = lp->palPalEntry[i].peRed;
+		biTint->bmiColors[i].rgbReserved = 0;
 	}
 
 	hPalette = CreatePalette(lp);
@@ -176,11 +275,13 @@ HPALETTE ReadBMPPalette(HINSTANCE hInstance, HDC hdc, const TCHAR *bmpfile)
 	
 	
 	hDDB = CreateDIBitmap(hdc,			// handle to device context
-			(BITMAPINFOHEADER *)bih,	// pointer to bitmap info header 
+			(BITMAPINFOHEADER *)&biTint->bmiHeader,	// pointer to bitmap info header
 			(LONG)CBM_INIT,				// initialization flag
 			pDIBBits,					// pointer to initialization data 
-			(BITMAPINFO *)bi,			// pointer to bitmap info
+			(BITMAPINFO *)biTint,		// pointer to bitmap info
 			DIB_RGB_COLORS);			// color-data usage 
+
+	HeapFree(GetProcessHeap(), 0, biTint);
 	
 	if(hInstance == 0)
 	{

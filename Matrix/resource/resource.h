@@ -3,6 +3,7 @@
 // Used by Matrix.rc
 //
 #define IDS_DESCRIPTION                 1
+#define IDOK2                           3
 #define IDD_CONFIG                      101
 #define IDB_BITMAP1                     104
 #define IDC_BLANKCURSOR                 105
@@ -23,7 +24,10 @@
 #define IDC_MSGSPEEDGRP                 1021
 #define IDC_SYSLINK1                    1022
 #define IDC_VERSION                     1023
-#define IDC_VERSION2                    1024
+#define IDC_COLOR                       1024
+#define IDC_SWATCH                      1025
+#define IDC_CYCLE                       1026
+#define IDC_DEFAULTS                    1027
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -32,7 +36,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

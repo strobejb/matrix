@@ -15,6 +15,8 @@ extern TCHAR szFontName[];
 extern BOOL FontBold;
 extern BOOL EnablePreviews;
 extern BOOL RandomizeMessages;
+extern BOOL CyclePalette;
+extern COLORREF MatrixColor;
 
 void LoadSettings()
 {
@@ -61,6 +63,12 @@ void LoadSettings()
 
 	if(ERROR_SUCCESS == RegQueryValueEx(hkey, _T("Randomize"),      0, 0, (BYTE *)&value, &len))
 		RandomizeMessages = (value == 0 ? FALSE : TRUE);
+
+	if(ERROR_SUCCESS == RegQueryValueEx(hkey, _T("CyclePalette"),      0, 0, (BYTE *)&value, &len))
+		CyclePalette = (value == 0 ? FALSE : TRUE);
+
+	if(ERROR_SUCCESS == RegQueryValueEx(hkey, _T("MatrixColor"),      0, 0, (BYTE *)&value, &len))
+		MatrixColor = (COLORREF)value;
 
 	len = sizeof(hugechar);
 
@@ -116,6 +124,12 @@ void SaveSettings()
 
 	value = FontBold;
 	RegSetValueEx(hkey, _T("FontBold"), 0, REG_DWORD, (BYTE*)&value, sizeof(value));
+
+	value = CyclePalette;
+	RegSetValueEx(hkey, _T("CyclePalette"), 0, REG_DWORD, (BYTE *)&value, sizeof(value));
+
+	value = MatrixColor;
+	RegSetValueEx(hkey, _T("MatrixColor"), 0, REG_DWORD, (BYTE *)&value, sizeof(value));
 
 	RegSetValueEx(hkey, _T("FontName"), 0, REG_SZ, (BYTE *)szFontName, lstrlen(szFontName)*sizeof(TCHAR));
 

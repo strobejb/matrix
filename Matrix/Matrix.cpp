@@ -36,6 +36,8 @@ int MatrixSpeed  = 5;			//1-10
 int FontSize	 = 12;			//8-30
 BOOL FontBold	 = TRUE;
 BOOL RandomizeMessages = FALSE;
+BOOL CyclePalette = FALSE;
+COLORREF MatrixColor = MATRIX_DEFAULT_COLOR;
 TCHAR szFontName[512] = _T("MS Sans Serif");
 
 void LoadSettings(void);
@@ -69,6 +71,22 @@ int jjrand(void)
 int MatrixTimerDelay()
 {
 	return (SPEED_MAX + SPEED_MIN - MatrixSpeed) * 10;
+}
+
+void ReloadMatrixBitmap(HWND hwnd, HANDLE *holddc)
+{
+	HDC hdc = GetDC(hwnd);
+
+	SelectObject(hdcSymbols, *holddc);
+	DeleteObject(hSymbolBitmap);
+	DeleteObject(hPalette);
+
+	hPalette = ReadBMPPalette(hInst, hdc, MAKEINTRESOURCE(IDB_BITMAP1));
+	extern HBITMAP hDDB;
+	hSymbolBitmap = hDDB;
+	*holddc = SelectObject(hdcSymbols, hSymbolBitmap);
+
+	ReleaseDC(hwnd, hdc);
 }
 
 
@@ -480,6 +498,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		{
 		case 0x2222:
 			Configure(hwnd);
+			ReloadMatrixBitmap(hwnd, &holddc);
 			return 0;
 		default:
 			return DefWindowProc(hwnd, iMsg, wParam, lParam);
@@ -508,6 +527,18 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 	
 	case WM_TIMER:
+		if(CyclePalette)
+		{
+			static DWORD lastcycle = 0;
+			DWORD now = GetTickCount();
+
+			if(now - lastcycle > 1667)
+			{
+				MatrixColor = HueToColor(ColorToHue(MatrixColor) + 1);
+				ReloadMatrixBitmap(hwnd, &holddc);
+				lastcycle = now;
+			}
+		}
 		
 		if(!fScreenSaving)
 			QueryPerformanceCounter(&pc1);

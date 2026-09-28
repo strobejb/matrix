@@ -4,6 +4,7 @@
 #include "resource/resource.h"
 #include "message.h"
 #include "matrix.h"
+#include "palette.h"
 
 extern int numrows, numcols;
 extern int maxrows, maxcols;
@@ -18,6 +19,8 @@ extern int MatrixSpeed;
 extern int FontSize;
 extern BOOL RandomizeMessages;
 extern BOOL FontBold;
+extern BOOL CyclePalette;
+extern COLORREF MatrixColor;
 extern TCHAR szFontName[];
 
 HDC hdcPrev;
@@ -26,6 +29,14 @@ HBITMAP hbmPrev;
 BOOL EnablePreviews = TRUE;
 
 void SaveSettings();
+
+void ApplyDefaults(HWND hwnd, COLORREF *crMatrixColor)
+{
+	*crMatrixColor = MATRIX_DEFAULT_COLOR;
+	SendDlgItemMessage(hwnd, IDC_COLOR, TBM_SETPOS, TRUE, ColorToHue(*crMatrixColor));
+	CheckDlgButton(hwnd, IDC_CYCLE, FALSE);
+	InvalidateRect(GetDlgItem(hwnd, IDC_SWATCH), NULL, TRUE);
+}
 
 int CALLBACK fontproc(ENUMLOGFONT *lpelfe, NEWTEXTMETRIC *lpntme, int FontType, LPARAM lParam)
 {
@@ -94,6 +105,9 @@ TCHAR* GetVersionString(const TCHAR* szFileName, const TCHAR* szValue, TCHAR* sz
 INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	static TCHAR buf[256];
+	static HBRUSH hbrSwatch;
+	static COLORREF crSwatch = CLR_INVALID;
+	static COLORREF crMatrixColor;
 	HDC hdc;
 	HWND hwndCombo, hwndCtrl;
 	int index, items, val;
@@ -107,6 +121,7 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	case WM_INITDIALOG:
 
 		InitMessage();
+		crMatrixColor = MatrixColor;
 		
 		numcols = maxcols;
 		numrows = maxrows;
@@ -123,6 +138,7 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		SendDlgItemMessage(hwnd, IDC_SLIDER2, TBM_SETRANGE, 0, MAKELONG(DENSITY_MIN, DENSITY_MAX));
 		SendDlgItemMessage(hwnd, IDC_SLIDER3, TBM_SETRANGE, 0, MAKELONG(MSGSPEED_MIN, MSGSPEED_MAX));
 		SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_SETRANGE, 0, MAKELONG(FONT_MIN, FONT_MAX));
+		SendDlgItemMessage(hwnd, IDC_COLOR, TBM_SETRANGE, 0, MAKELONG(0, 359));
 
 		//SendDlgItemMessage(hwnd, IDC_SLIDER1, TBM_SETTICFREQ, 5, 0);
 		SendDlgItemMessage(hwnd, IDC_SLIDER2, TBM_SETTICFREQ, 5, 0);
@@ -133,6 +149,8 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		SendDlgItemMessage(hwnd, IDC_SLIDER2, TBM_SETPOS, TRUE, Density);
 		SendDlgItemMessage(hwnd, IDC_SLIDER3, TBM_SETPOS, TRUE, MessageSpeed);
 		SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_SETPOS, TRUE, FontSize);
+		SendDlgItemMessage(hwnd, IDC_COLOR, TBM_SETPOS, TRUE, ColorToHue(crMatrixColor));
+		SetDlgItemText(hwnd, IDC_SWATCH, _T(""));
 
 		GetModuleFileName(0, szCurExe, MAX_PATH);
 		GetVersionString(szCurExe, TEXT("FileVersion"), szVersion, 40);
@@ -142,6 +160,7 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		CheckDlgButton(hwnd, IDC_ENABLEPREV, EnablePreviews);
 		CheckDlgButton(hwnd, IDC_RANDOM, RandomizeMessages);
 		CheckDlgButton(hwnd, IDC_BOLD, FontBold);
+		CheckDlgButton(hwnd, IDC_CYCLE, CyclePalette);
 
 		AddFonts(GetDlgItem(hwnd, IDC_COMBO2));
 
@@ -150,6 +169,13 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		return 0;
 
 	case WM_DESTROY:
+		if(hbrSwatch)
+		{
+			DeleteObject(hbrSwatch);
+			hbrSwatch = NULL;
+			crSwatch = CLR_INVALID;
+		}
+
 		DeInitMessage();
 		return 0;
 
@@ -160,6 +186,20 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			BitBlt((HDC)wParam, (rect.right-maxcols)/2, (rect.bottom-maxrows)/2, maxcols, maxrows, hdcPrev, 0, 0, SRCCOPY);
 			return (INT_PTR)GetStockObject(NULL_BRUSH);
 		}	
+		else if((HWND)lParam == GetDlgItem(hwnd, IDC_SWATCH))
+		{
+			if(hbrSwatch == NULL || crSwatch != crMatrixColor)
+			{
+				if(hbrSwatch)
+					DeleteObject(hbrSwatch);
+
+				hbrSwatch = CreateSolidBrush(crMatrixColor);
+				crSwatch = crMatrixColor;
+			}
+
+			SetBkColor((HDC)wParam, crMatrixColor);
+			return (INT_PTR)hbrSwatch;
+		}
 		else
 		{
 			break;
@@ -180,6 +220,11 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 		{
 			if(EnablePreviews)
 				PostMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_PREV, BN_CLICKED), (LPARAM)GetDlgItem(hwnd,IDC_PREV));
+		}
+		else if((HWND)lParam == GetDlgItem(hwnd, IDC_COLOR))
+		{
+			crMatrixColor = HueToColor((int)SendDlgItemMessage(hwnd, IDC_COLOR, TBM_GETPOS, 0, 0));
+			InvalidateRect(GetDlgItem(hwnd, IDC_SWATCH), NULL, TRUE);
 		}
 
 		return 0;
@@ -219,6 +264,10 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 				PostMessage(hwnd, WM_COMMAND, MAKEWPARAM(IDC_PREV, BN_CLICKED), (LPARAM)GetDlgItem(hwnd,IDC_PREV));
 			break;
 
+		case IDC_DEFAULTS:
+			ApplyDefaults(hwnd, &crMatrixColor);
+			break;
+
 		case IDOK:
 			
 			hwndCtrl = GetDlgItem(hwnd, IDC_COMBO1);
@@ -251,6 +300,10 @@ INT_PTR CALLBACK configdlgproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 			val = (int)SendDlgItemMessage(hwnd, IDC_SLIDER4, TBM_GETPOS, 0, 0);
 			if(val >= FONT_MIN && val <= FONT_MAX)
 				FontSize = val;
+
+			//palette color
+			MatrixColor = crMatrixColor;
+			CyclePalette = IsDlgButtonChecked(hwnd, IDC_CYCLE);
 
 			SaveSettings();
 			EndDialog(hwnd, 0);
