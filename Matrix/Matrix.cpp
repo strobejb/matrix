@@ -423,6 +423,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 	static int skip=0;
 	static HANDLE holddc;
 	static HPALETTE holdpal;
+	static HMENU hsysmenu;
 
 	//WHY???
 	static bool fHere = false;
@@ -453,6 +454,14 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 		
 		ReleaseDC(hwnd, hdc);
 
+		// add settings into sys menu for easier dev
+		hsysmenu = GetSystemMenu(hwnd, FALSE);
+
+
+		// add items *before* the close item
+		InsertMenu(hsysmenu, SC_CLOSE, MF_BYCOMMAND | MF_ENABLED | MF_STRING, MAKEWPARAM(0x2222,0), _T("&Settings..."));
+		InsertMenu(hsysmenu, SC_CLOSE, MF_BYCOMMAND | MF_SEPARATOR, -1, _T(""));
+
 		InitMatrix(hwnd);
 		i = QueryPerformanceFrequency(&freq);
 		
@@ -460,6 +469,16 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 			SetCursor(NULL);
 		
 		return 0;
+
+	case WM_SYSCOMMAND:
+		switch (LOWORD(wParam))
+		{
+		case 0x2222:
+			Configure(hwnd);
+			return 0;
+		default:
+			return DefWindowProc(hwnd, iMsg, wParam, lParam);
+		}
 
 	case WM_SIZE:
 
