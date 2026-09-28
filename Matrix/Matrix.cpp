@@ -309,12 +309,12 @@ int Normal(int iCmdShow)
 	wndclass.cbClsExtra		= 0;
 	wndclass.cbWndExtra		= 0;
 	wndclass.hInstance		= hInst;
-	wndclass.hIcon			= LoadIcon (NULL, IDI_APPLICATION);
+	wndclass.hIcon			= LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 	wndclass.hCursor		= hcurs;
 	wndclass.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);// NULL;
 	wndclass.lpszMenuName	= 0;
 	wndclass.lpszClassName	= szAppName;
-	wndclass.hIconSm		= LoadIcon(NULL, IDI_APPLICATION);
+	wndclass.hIconSm		= LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 
 	RegisterClassEx(&wndclass);
 
