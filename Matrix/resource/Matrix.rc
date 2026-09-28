@@ -58,9 +58,9 @@ BEGIN
     COMBOBOX        IDC_COMBO2,194,102,95,71,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
     LTEXT           "&Font Name:",IDC_STATIC,153,104,38,8
     CONTROL         "&Bold",IDC_BOLD,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,296,104,30,10
-    CTEXT           "Matrix Screensaver",IDC_STATIC,8,179,64,8
+    CTEXT           "Matrix Screensaver",IDC_STATIC,8,182,64,8
     CONTROL         "<a>www.catch22.net</a>",IDC_SYSLINK1,"SysLink",LWS_RIGHT | WS_TABSTOP,48,193,86,14
-    CTEXT           "Matrix Screensaver",IDC_VERSION,8,190,64,14
+    CTEXT           "Matrix Screensaver",IDC_VERSION,8,193,64,14
     GROUPBOX        "Palette",IDC_STATIC,145,150,188,52
     LTEXT           "Static",IDC_SWATCH,154,165,24,15,0,WS_EX_STATICEDGE
     CONTROL         "",IDC_COLOR,"msctls_trackbar32",TBS_AUTOTICKS | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,188,166,134,13
