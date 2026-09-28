@@ -66,6 +66,11 @@ int jjrand(void)
 	//return rand();
 }
 
+int MatrixTimerDelay()
+{
+	return (SPEED_MAX + SPEED_MIN - MatrixSpeed) * 10;
+}
+
 
 Matrix *matrix;
 
@@ -255,8 +260,8 @@ void InitMatrix(HWND hwnd)
 		matrix[i].Init(maxrows);
 
 	//Start the matrix
-	//Matrix speed 1-10. We need 10x this for the timer
-	SetTimer(hwnd, 0xDeadBeef, MatrixSpeed * 10, 0);
+	//Matrix speed 1-10. Higher values should produce shorter timer delays.
+	SetTimer(hwnd, 0xDeadBeef, MatrixTimerDelay(), 0);
 }
 
 int Normal(int iCmdShow)
