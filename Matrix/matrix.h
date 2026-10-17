@@ -6,6 +6,12 @@ extern int maxcols, maxrows;
 extern int numrows, numcols;
 extern int xChar, yChar;
 
+#ifdef _M_ARM
+#define IsNT() ( TRUE )
+#else
+#define IsNT() ( sizeof(void*) > 4 || (int)GetVersion() >= 0 )
+#endif
+
 #define DENSITY_MIN 5
 #define DENSITY_MAX 50
 
@@ -55,9 +61,9 @@ struct Matrix
 		bliplen = jjrand() % 50 + numrows;
 	}
 
-	Matrix() = default;////int runlength)
-	//{
-	//}
+	Matrix() ////int runlength)
+	{
+	}
 
 	~Matrix() { delete[] run; delete[] update; }
 	void ScrollDown(HDC hdc);

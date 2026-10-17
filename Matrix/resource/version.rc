@@ -5,6 +5,10 @@
 //
 #include "version.h"
 
+#ifndef VS_VERSION_INFO
+#define VS_VERSION_INFO 1
+#endif
+
 #define STRINGIZE_(s) #s
 #define Q(s) STRINGIZE_(s)
 

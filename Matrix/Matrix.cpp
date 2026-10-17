@@ -51,8 +51,8 @@ BOOL VerifyPassword(HWND hwnd);
 
 bool fScreenSaving = false;
 
-HDC		hdcMessage;
-HBITMAP hBitmapMsg;
+//HDC		hdcMessage;
+//HBITMAP hBitmapMsg;
 
 int jjrand(void) 
 { 
@@ -286,7 +286,7 @@ int Normal(int iCmdShow)
 {
 	HWND	hwnd;
 	MSG	msg;
-	WNDCLASSEX	wndclass;
+	WNDCLASS	wndclass;
 	DWORD exStyle, style;
 	HCURSOR hcurs;
 
@@ -303,7 +303,6 @@ int Normal(int iCmdShow)
 		hcurs   = LoadCursor(NULL, IDC_ARROW);
 	}
 	//Window class for the main application parent window
-	wndclass.cbSize			= sizeof(wndclass);
 	wndclass.style			= 0;//CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc	= WndProc;
 	wndclass.cbClsExtra		= 0;
@@ -314,9 +313,8 @@ int Normal(int iCmdShow)
 	wndclass.hbrBackground	= (HBRUSH)GetStockObject(BLACK_BRUSH);// NULL;
 	wndclass.lpszMenuName	= 0;
 	wndclass.lpszClassName	= szAppName;
-	wndclass.hIconSm		= LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON1));
 
-	RegisterClassEx(&wndclass);
+	RegisterClass(&wndclass);
 
 	InitMessage();
 
@@ -402,7 +400,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 	HWND	hwndParent;
 
 	hInst = hInstance;			//Make the instance globally available
-	TCHAR* s = GetCommandLine();
+	//TCHAR* s = GetCommandLine();
 
 	//Make sure that only 1 instance runs at a time - 
 	//Win98 seems to want us to restart every 5 seconds!!
@@ -436,7 +434,7 @@ int WINAPI WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine
 }
 
 //-----------------------------------------------------------------------------
-int main(void) {}
+int WINAPIV main(void) {}
 
 LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -580,7 +578,7 @@ LRESULT CALLBACK WndProc (HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_CLOSE:
 		
-		if(fScreenSaving && VerifyPassword(hwnd) || !fScreenSaving)
+		if(!fScreenSaving || VerifyPassword(hwnd))
 			DestroyWindow(hwnd);
 		return 0;
 
